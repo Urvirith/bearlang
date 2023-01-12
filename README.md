@@ -1,9 +1,7 @@
 # bearlang
-Simple Language based on Go and Rust for Embedded Systems
+Simple Language based on Go and Rust for Embedded Systems / Operating Systems
 
-Simple Language For Embedded Development, name is based off nickname for my kid
-
-Will start off as interprator in Go, possible migration to Rust for speed.
+Name is based off nickname for my kid
 
 Hopefully will take off and evolve,
 
