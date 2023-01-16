@@ -1,8 +1,6 @@
 # bearlang
 Simple Language based on Go and Rust for Embedded Systems / Operating Systems
 
-Name is based off nickname for my kid
-
 Hopefully will take off and evolve,
 
 Goals: No Hidden Memory Allocation - will not have Heap At Start No Null Pointers No Macros, No Preprocessor Memory Safety - Will Hopefully Look at Rust Destructor Model
