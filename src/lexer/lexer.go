@@ -11,15 +11,15 @@ type Lexer struct {
 	ch       byte
 }
 
-func New(buf string) *Lexer {
+func Init(buf string) *Lexer {
 	lex := &Lexer{buf: buf}
 	lex.next()
 	return lex
 }
 
 // Scan the tokens
-func (lex *Lexer) Scan() token.Token {
-	tok := token.Token{Type: token.ILLEGAL, Literal: ""}
+func (lex *Lexer) Scan() *token.Token {
+	tok := &token.Token{Type: token.ILLEGAL, Literal: ""}
 	lex.consume()
 
 	// Skip whitepace
@@ -68,8 +68,11 @@ func (lex *Lexer) Scan() token.Token {
 			tok.Type = token.DIV_ASSIGN
 			lex.next()
 		case '/':
+			lex.consumeComment()
 			tok.Type = token.COMMENT
-			lex.next()
+		case '*':
+			lex.consumeMultiLineComment()
+			tok.Type = token.COMMENT
 		default:
 			tok.Type = token.DIV
 		}
@@ -183,6 +186,23 @@ func (lex *Lexer) consume() {
 	}
 }
 
+func (lex *Lexer) consumeComment() {
+	for lex.ch != '\n' {
+		lex.next()
+	}
+}
+
+func (lex *Lexer) consumeMultiLineComment() {
+	for lex.ch != 0 {
+		if lex.ch == '*' && lex.peek() == '/' {
+			lex.next()
+			return
+		}
+
+		lex.next()
+	}
+}
+
 // Get the next character from the input file
 func (lex *Lexer) next() {
 	// Get next character or at of buffer return 0
@@ -207,9 +227,9 @@ func (lex *Lexer) peek() byte {
 }
 
 // Read the identifier of the input string
-func (lex *Lexer) read_id() token.Token {
+func (lex *Lexer) read_id() *token.Token {
 	pos := lex.pos
-	tok := token.Token{Type: token.ILLEGAL, Literal: ""}
+	tok := &token.Token{Type: token.ILLEGAL, Literal: ""}
 
 	for lex.isLetter() || lex.isDigit() {
 		lex.next()
@@ -225,14 +245,14 @@ func (lex *Lexer) read_id() token.Token {
 }
 
 // Scan and return an integer literal or float literal
-func (lex *Lexer) read_int() token.Token {
+func (lex *Lexer) read_int() *token.Token {
 	pos := lex.pos
 
 	for lex.isDigit() {
 		lex.next()
 	}
 
-	return token.Token{Type: token.NUM, Literal: lex.buf[pos:lex.pos]}
+	return &token.Token{Type: token.NUM, Literal: lex.buf[pos:lex.pos]}
 }
 
 // Verify is letter

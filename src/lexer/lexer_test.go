@@ -7,7 +7,7 @@ import (
 )
 
 func TestTokens(t *testing.T) {
-	input := `= + - * / % | & ! ~ ^ += -= *= /= ++ -- |= &= ^= << >> == != > < >= <= || && ( ) { } [ ] , . : ; // import fn var vol struct enum union const return if elif else match default for loop while true false i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 bool`
+	input := `= + - * / % | & ! ~ ^ += -= *= /= ++ -- |= &= ^= << >> == != > < >= <= || && ( ) { } [ ] , . : ; import fn var vol struct enum union const return if elif else match default for loop while true false i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 bool`
 
 	tests := []struct {
 		expectType    token.TokenType
@@ -53,7 +53,6 @@ func TestTokens(t *testing.T) {
 		{token.FULLSTOP, ""},
 		{token.COLON, ""},
 		{token.SCOLON, ""},
-		{token.COMMENT, ""},
 		{token.IMPORT, ""},
 		{token.FUNCTION, ""},
 		{token.VAR, ""},
@@ -89,7 +88,7 @@ func TestTokens(t *testing.T) {
 		{token.EOF, ""},
 	}
 
-	l := New(input)
+	l := Init(input)
 
 	for i, tt := range tests {
 		tok := l.Scan()
@@ -175,7 +174,101 @@ func TestCode(t *testing.T) {
 		{token.EOF, ""},
 	}
 
-	l := New(input)
+	l := Init(input)
+
+	for i, tt := range tests {
+		tok := l.Scan()
+
+		if tok.Type != tt.expectType {
+			t.Fatalf("tests[%d] - tokentype wrong. expected: %q, got: %q", i, tt.expectType, tok.Type)
+		}
+
+		if tok.Literal != tt.expectLiteral {
+			t.Fatalf("tests[%d] - literal wrong. expected: %q, got: %q", i, tt.expectLiteral, tok.Literal)
+		}
+	}
+}
+
+func TestComments(t *testing.T) {
+	input := `
+		/*
+			This is a multiline comment
+		*/
+		fn main(x: u32, y: u32) u32 {
+			// Float Assigned
+			var float: f32 = 50.1;
+			// Woof Assigned x * y;
+			var woof: u32 = x * y;
+
+			woof++;
+			woof--;
+			
+			var arf = 5;
+			arf *= woof;
+
+			return arf;
+		}
+	`
+
+	tests := []struct {
+		expectType    token.TokenType
+		expectLiteral string
+	}{
+		{token.COMMENT, ""},
+		{token.FUNCTION, ""},
+		{token.IDENT, "main"},
+		{token.LPAREN, ""},
+		{token.IDENT, "x"},
+		{token.COLON, ""},
+		{token.U32, ""},
+		{token.COMMA, ""},
+		{token.IDENT, "y"},
+		{token.COLON, ""},
+		{token.U32, ""},
+		{token.RPAREN, ""},
+		{token.U32, ""},
+		{token.LBRACE, ""},
+		{token.COMMENT, ""},
+		{token.VAR, ""},
+		{token.IDENT, "float"},
+		{token.COLON, ""},
+		{token.F32, ""},
+		{token.ASSIGN, ""},
+		{token.NUM, "50.1"},
+		{token.SCOLON, ""},
+		{token.COMMENT, ""},
+		{token.VAR, ""},
+		{token.IDENT, "woof"},
+		{token.COLON, ""},
+		{token.U32, ""},
+		{token.ASSIGN, ""},
+		{token.IDENT, "x"},
+		{token.MUL, ""},
+		{token.IDENT, "y"},
+		{token.SCOLON, ""},
+		{token.IDENT, "woof"},
+		{token.INC, ""},
+		{token.SCOLON, ""},
+		{token.IDENT, "woof"},
+		{token.DEC, ""},
+		{token.SCOLON, ""},
+		{token.VAR, ""},
+		{token.IDENT, "arf"},
+		{token.ASSIGN, ""},
+		{token.NUM, "5"},
+		{token.SCOLON, ""},
+		{token.IDENT, "arf"},
+		{token.MUL_ASSIGN, ""},
+		{token.IDENT, "woof"},
+		{token.SCOLON, ""},
+		{token.RETURN, ""},
+		{token.IDENT, "arf"},
+		{token.SCOLON, ""},
+		{token.RBRACE, ""},
+		{token.EOF, ""},
+	}
+
+	l := Init(input)
 
 	for i, tt := range tests {
 		tok := l.Scan()
