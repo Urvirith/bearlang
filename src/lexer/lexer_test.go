@@ -200,14 +200,19 @@ func TestComments(t *testing.T) {
 			// Woof Assigned x * y;
 			var woof: u32 = x * y;
 
+			// Increment Woof
 			woof++;
+			// Decrement Woof
 			woof--;
 			
-			var arf = 5;
+			// Arf Assigned
+			var arf: u32 = 5;
+			// Mul Assign Arf by Woof
 			arf *= woof;
 
+			//Return Woof
 			return arf;
-		}
+		} // End Main
 	`
 
 	tests := []struct {
@@ -246,25 +251,33 @@ func TestComments(t *testing.T) {
 		{token.MUL, ""},
 		{token.IDENT, "y"},
 		{token.SCOLON, ""},
+		{token.COMMENT, ""},
 		{token.IDENT, "woof"},
 		{token.INC, ""},
 		{token.SCOLON, ""},
+		{token.COMMENT, ""},
 		{token.IDENT, "woof"},
 		{token.DEC, ""},
 		{token.SCOLON, ""},
+		{token.COMMENT, ""},
 		{token.VAR, ""},
 		{token.IDENT, "arf"},
+		{token.COLON, ""},
+		{token.U32, ""},
 		{token.ASSIGN, ""},
 		{token.NUM, "5"},
 		{token.SCOLON, ""},
+		{token.COMMENT, ""},
 		{token.IDENT, "arf"},
 		{token.MUL_ASSIGN, ""},
 		{token.IDENT, "woof"},
 		{token.SCOLON, ""},
+		{token.COMMENT, ""},
 		{token.RETURN, ""},
 		{token.IDENT, "arf"},
 		{token.SCOLON, ""},
 		{token.RBRACE, ""},
+		{token.COMMENT, ""},
 		{token.EOF, ""},
 	}
 
