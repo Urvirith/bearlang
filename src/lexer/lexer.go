@@ -28,44 +28,55 @@ func (lex *Lexer) Scan() *token.Token {
 		switch lex.peek() {
 		case '=':
 			tok.Type = token.EQU
+			tok.Literal = "=="
 			lex.next()
 		default:
 			tok.Type = token.ASSIGN
+			tok.Literal = "="
 		}
 	case '+':
 		switch lex.peek() {
 		case '=':
 			tok.Type = token.ADD_ASSIGN
+			tok.Literal = "+="
 			lex.next()
 		case '+':
 			tok.Type = token.INC
+			tok.Literal = "++"
 			lex.next()
 		default:
 			tok.Type = token.ADD
+			tok.Literal = "+"
 		}
 	case '-':
 		switch lex.peek() {
 		case '=':
 			tok.Type = token.SUB_ASSIGN
+			tok.Literal = "-="
 			lex.next()
 		case '-':
 			tok.Type = token.DEC
+			tok.Literal = "--"
 			lex.next()
 		default:
 			tok.Type = token.SUB
+			tok.Literal = "-"
 		}
 	case '*':
 		switch lex.peek() {
 		case '=':
 			tok.Type = token.MUL_ASSIGN
+			tok.Literal = "*="
 			lex.next()
 		default:
 			tok.Type = token.MUL
+			tok.Literal = "*"
 		}
 	case '/':
 		switch lex.peek() {
 		case '=':
 			tok.Type = token.DIV_ASSIGN
+			tok.Literal = "/="
 			lex.next()
 		case '/':
 			lex.consumeComment()
@@ -75,93 +86,123 @@ func (lex *Lexer) Scan() *token.Token {
 			tok.Type = token.COMMENT
 		default:
 			tok.Type = token.DIV
+			tok.Literal = "/"
 		}
 	case '%':
 		tok.Type = token.MOD
+		tok.Literal = "%"
 	case '&':
 		switch lex.peek() {
 		case '=':
 			tok.Type = token.AND_ASSIGN
+			tok.Literal = "&="
 			lex.next()
 		case '&':
 			tok.Type = token.BAND
+			tok.Literal = "&&"
 			lex.next()
 		default:
 			tok.Type = token.AND
+			tok.Literal = "&"
 		}
 	case '|':
 		switch lex.peek() {
 		case '=':
 			tok.Type = token.OR_ASSIGN
+			tok.Literal = "|="
 			lex.next()
 		case '|':
 			tok.Type = token.BOR
+			tok.Literal = "||"
 			lex.next()
 		default:
 			tok.Type = token.OR
+			tok.Literal = "|"
 		}
 	case '!':
 		switch lex.peek() {
 		case '=':
 			tok.Type = token.NEQ
+			tok.Literal = "!="
 			lex.next()
 		default:
 			tok.Type = token.NOT
+			tok.Literal = "!"
 		}
 	case '<':
 		switch lex.peek() {
 		case '=':
 			tok.Type = token.LEQ
+			tok.Literal = "<="
 			lex.next()
 		case '<':
 			tok.Type = token.LSHF
+			tok.Literal = "<<"
 			lex.next()
 		default:
 			tok.Type = token.LES
+			tok.Literal = "<"
 		}
 	case '>':
 		switch lex.peek() {
 		case '=':
 			tok.Type = token.GEQ
+			tok.Literal = ">="
 			lex.next()
 		case '>':
 			tok.Type = token.RSHF
+			tok.Literal = ">>"
 			lex.next()
 		default:
 			tok.Type = token.GRT
+			tok.Literal = ">"
 		}
 	case '~':
 		tok.Type = token.COMP
+		tok.Literal = "~"
 	case '^':
 		switch lex.peek() {
 		case '=':
 			tok.Type = token.XOR_ASSIGN
+			tok.Literal = "^="
 			lex.next()
 		default:
 			tok.Type = token.XOR
+			tok.Literal = "^"
 		}
 	case '(':
 		tok.Type = token.LPAREN
+		tok.Literal = "("
 	case ')':
 		tok.Type = token.RPAREN
+		tok.Literal = ")"
 	case '{':
 		tok.Type = token.LBRACE
+		tok.Literal = "{"
 	case '}':
 		tok.Type = token.RBRACE
+		tok.Literal = "}"
 	case '[':
 		tok.Type = token.LBRACK
+		tok.Literal = "["
 	case ']':
 		tok.Type = token.RBRACK
+		tok.Literal = "]"
 	case ',':
 		tok.Type = token.COMMA
+		tok.Literal = ","
 	case '.':
 		tok.Type = token.FULLSTOP
+		tok.Literal = "."
 	case ':':
 		tok.Type = token.COLON
+		tok.Literal = ":"
 	case ';':
 		tok.Type = token.SCOLON
+		tok.Literal = ";"
 	case 0:
 		tok.Type = token.EOF
+		tok.Literal = "eof"
 	default:
 		if lex.isNum() {
 			tok = lex.read_int()
@@ -236,10 +277,7 @@ func (lex *Lexer) read_id() *token.Token {
 	}
 
 	tok.Type = token.LookupID(lex.buf[pos:lex.pos])
-
-	if tok.Type == token.IDENT {
-		tok.Literal = lex.buf[pos:lex.pos]
-	}
+	tok.Literal = lex.buf[pos:lex.pos]
 
 	return tok
 }

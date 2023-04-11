@@ -83,7 +83,7 @@ const (
 	// Keywords
 	IMPORT   = "IMPORT" // Import
 	FUNCTION = "FN"     // Function
-	VAR      = "VAR"    // Variable
+	LET      = "LET"    // Variable
 	VOLITILE = "VOL"    // Volitile
 	STRUCT   = "STRUCT" // Structure
 	ENUM     = "ENUM"   // Enumeration
@@ -108,7 +108,7 @@ const (
 
 var keywords = map[string]TokenType{
 	"fn":      FUNCTION,
-	"var":     VAR,
+	"let":     LET,
 	"vol":     VOLITILE,
 	"struct":  STRUCT,
 	"enum":    ENUM,
